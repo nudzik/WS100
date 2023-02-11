@@ -1,22 +1,22 @@
-#include "selec_meter.h"
-#include "selec_meter_registers.h"
+#include "bgtech_meter.h"
+#include "bgtech_meter_registers.h"
 #include "esphome/core/log.h"
 
 namespace esphome {
-namespace selec_meter {
+namespace bgtech_meter {
 
-static const char *const TAG = "selec_meter";
+static const char *const TAG = "bgtech_meter";
 
 static const uint8_t MODBUS_CMD_READ_IN_REGISTERS = 0x04;
 static const uint8_t MODBUS_REGISTER_COUNT = 34;  // 34 x 16-bit registers
 
-void SelecMeter::on_modbus_data(const std::vector<uint8_t> &data) {
+void BgtechMeter::on_modbus_data(const std::vector<uint8_t> &data) {
   if (data.size() < MODBUS_REGISTER_COUNT * 2) {
-    ESP_LOGW(TAG, "Invalid size for SelecMeter!");
+    ESP_LOGW(TAG, "Invalid size for BgtechMeter!");
     return;
   }
 
-  auto selec_meter_get_float = [&](size_t i, float unit) -> float {
+  auto bgtech_meter_get_float = [&](size_t i, float unit) -> float {
     uint32_t temp = encode_uint32(data[i + 2], data[i + 3], data[i], data[i + 1]);
 
     float f;
@@ -24,26 +24,26 @@ void SelecMeter::on_modbus_data(const std::vector<uint8_t> &data) {
     return (f * unit);
   };
 
-  float total_active_energy = selec_meter_get_float(SELEC_TOTAL_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float import_active_energy = selec_meter_get_float(SELEC_IMPORT_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float export_active_energy = selec_meter_get_float(SELEC_EXPORT_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float total_reactive_energy = selec_meter_get_float(SELEC_TOTAL_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float import_reactive_energy = selec_meter_get_float(SELEC_IMPORT_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float export_reactive_energy = selec_meter_get_float(SELEC_EXPORT_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
-  float apparent_energy = selec_meter_get_float(SELEC_APPARENT_ENERGY * 2, NO_DEC_UNIT);
-  float active_power = selec_meter_get_float(SELEC_ACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
-  float reactive_power = selec_meter_get_float(SELEC_REACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
-  float apparent_power = selec_meter_get_float(SELEC_APPARENT_POWER * 2, MULTIPLY_THOUSAND_UNIT);
-  float voltage = selec_meter_get_float(SELEC_VOLTAGE * 2, NO_DEC_UNIT);
-  float current = selec_meter_get_float(SELEC_CURRENT * 2, NO_DEC_UNIT);
-  float power_factor = selec_meter_get_float(SELEC_POWER_FACTOR * 2, NO_DEC_UNIT);
-  float frequency = selec_meter_get_float(SELEC_FREQUENCY * 2, NO_DEC_UNIT);
+  float total_active_energy = bgtech_meter_get_float(BGTECH_TOTAL_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float import_active_energy = bgtech_meter_get_float(BGTECH_IMPORT_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float export_active_energy = bgtech_meter_get_float(BGTECH_EXPORT_ACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float total_reactive_energy = bgtech_meter_get_float(BGTECH_TOTAL_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float import_reactive_energy = bgtech_meter_get_float(BGTECH_IMPORT_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float export_reactive_energy = bgtech_meter_get_float(BGTECH_EXPORT_REACTIVE_ENERGY * 2, NO_DEC_UNIT);
+  float apparent_energy = bgtech_meter_get_float(BGTECH_APPARENT_ENERGY * 2, NO_DEC_UNIT);
+  float active_power = bgtech_meter_get_float(BGTECH_ACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+  float reactive_power = bgtech_meter_get_float(BGTECH_REACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+  float apparent_power = bgtech_meter_get_float(BGTECH_APPARENT_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+  float voltage = bgtech_meter_get_float(BGTECH_VOLTAGE * 2, NO_DEC_UNIT);
+  float current = bgtech_meter_get_float(BGTECH_CURRENT * 2, NO_DEC_UNIT);
+  float power_factor = bgtech_meter_get_float(BGTECH_POWER_FACTOR * 2, NO_DEC_UNIT);
+  float frequency = bgtech_meter_get_float(BGTECH_FREQUENCY * 2, NO_DEC_UNIT);
   float maximum_demand_active_power =
-      selec_meter_get_float(SELEC_MAXIMUM_DEMAND_ACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+      bgtech_meter_get_float(BGTECH_MAXIMUM_DEMAND_ACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
   float maximum_demand_reactive_power =
-      selec_meter_get_float(SELEC_MAXIMUM_DEMAND_REACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+      bgtech_meter_get_float(BGTECH_MAXIMUM_DEMAND_REACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
   float maximum_demand_apparent_power =
-      selec_meter_get_float(SELEC_MAXIMUM_DEMAND_APPARENT_POWER * 2, MULTIPLY_THOUSAND_UNIT);
+      bgtech_meter_get_float(BGTECH_MAXIMUM_DEMAND_APPARENT_POWER * 2, MULTIPLY_THOUSAND_UNIT);
 
   if (this->total_active_energy_sensor_ != nullptr)
     this->total_active_energy_sensor_->publish_state(total_active_energy);
@@ -81,9 +81,9 @@ void SelecMeter::on_modbus_data(const std::vector<uint8_t> &data) {
     this->maximum_demand_apparent_power_sensor_->publish_state(maximum_demand_apparent_power);
 }
 
-void SelecMeter::update() { this->send(MODBUS_CMD_READ_IN_REGISTERS, 0, MODBUS_REGISTER_COUNT); }
-void SelecMeter::dump_config() {
-  ESP_LOGCONFIG(TAG, "SELEC Meter:");
+void BgtechMeter::update() { this->send(MODBUS_CMD_READ_IN_REGISTERS, 0, MODBUS_REGISTER_COUNT); }
+void BgtechMeter::dump_config() {
+  ESP_LOGCONFIG(TAG, "BGTECH Meter:");
   ESP_LOGCONFIG(TAG, "  Address: 0x%02X", this->address_);
   LOG_SENSOR("  ", "Total Active Energy", this->total_active_energy_sensor_);
   LOG_SENSOR("  ", "Import Active Energy", this->import_active_energy_sensor_);
@@ -104,5 +104,5 @@ void SelecMeter::dump_config() {
   LOG_SENSOR("  ", "Maximum Demand Apparent Power", this->maximum_demand_apparent_power_sensor_);
 }
 
-}  // namespace selec_meter
+}  // namespace bgtech_meter
 }  // namespace esphome

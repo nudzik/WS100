@@ -31,7 +31,7 @@ from esphome.const import (
 )
 
 AUTO_LOAD = ["modbus"]
-CODEOWNERS = ["@sourabhjaiswal"]
+CODEOWNERS = ["@nudzik"]
 
 CONF_TOTAL_ACTIVE_ENERGY = "total_active_energy"
 CONF_TOTAL_REACTIVE_ENERGY = "total_reactive_energy"
@@ -44,9 +44,9 @@ UNIT_KILOWATT_HOURS = "kWh"
 UNIT_KILOVOLT_AMPS_HOURS = "kVAh"
 UNIT_KILOVOLT_AMPS_REACTIVE_HOURS = "kVARh"
 
-selec_meter_ns = cg.esphome_ns.namespace("selec_meter")
-SelecMeter = selec_meter_ns.class_(
-    "SelecMeter", cg.PollingComponent, modbus.ModbusDevice
+bgtech_meter_ns = cg.esphome_ns.namespace("bgtech_meter")
+BgtechMeter = bgtech_meter_ns.class_(
+    "BgtechMeter", cg.PollingComponent, modbus.ModbusDevice
 )
 
 SENSORS = {
@@ -146,7 +146,7 @@ SENSORS = {
 }
 
 CONFIG_SCHEMA = (
-    cv.Schema({cv.GenerateID(): cv.declare_id(SelecMeter)})
+    cv.Schema({cv.GenerateID(): cv.declare_id(BgtechMeter)})
     .extend(
         {cv.Optional(sensor_name): schema for sensor_name, schema in SENSORS.items()}
     )
