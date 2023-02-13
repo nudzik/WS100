@@ -22,11 +22,11 @@ static const uint16_t BGTECH_REACTIVE_POWER = 0x0108;
 static const uint16_t BGTECH_APPARENT_POWER = 0x0106;
 static const uint16_t BGTECH_VOLTAGE = 0x0100;
 static const uint16_t BGTECH_CURRENT = 0x0102;
-static const uint8_t BGTECH_POWER_FACTOR = 0x010B;
-static const uint8_t BGTECH_FREQUENCY = 0x010A;
+static const uint16_t BGTECH_POWER_FACTOR = 0x010B;
+static const uint16_t BGTECH_FREQUENCY = 0x010A;
 static const uint16_t BGTECH_MAXIMUM_DEMAND_ACTIVE_POWER = 0x0178;
 static const uint16_t BGTECH_MAXIMUM_DEMAND_REACTIVE_POWER = 0x0182;
-static const uint8_t BGTECH_MAXIMUM_DEMAND_APPARENT_POWER = 0x0180;
+static const uint16_t BGTECH_MAXIMUM_DEMAND_APPARENT_POWER = 0x0180;
 
 }  // namespace bgtech_meter
 }  // namespace esphome
