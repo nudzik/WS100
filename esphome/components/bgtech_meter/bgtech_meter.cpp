@@ -34,7 +34,7 @@ void BgtechMeter::on_modbus_data(const std::vector<uint8_t> &data) {
   float active_power = bgtech_meter_get_float(BGTECH_ACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
   float reactive_power = bgtech_meter_get_float(BGTECH_REACTIVE_POWER * 2, MULTIPLY_THOUSAND_UNIT);
   float apparent_power = bgtech_meter_get_float(BGTECH_APPARENT_POWER * 2, MULTIPLY_THOUSAND_UNIT);
-  float voltage = bgtech_meter_get_float(BGTECH_VOLTAGE * 2, NO_DEC_UNIT);
+  float voltage = bgtech_meter_get_float(BGTECH_VOLTAGE, NO_DEC_UNIT);
   float current = bgtech_meter_get_float(BGTECH_CURRENT * 2, NO_DEC_UNIT);
   float power_factor = bgtech_meter_get_float(BGTECH_POWER_FACTOR * 2, NO_DEC_UNIT);
   float frequency = bgtech_meter_get_float(BGTECH_FREQUENCY * 2, NO_DEC_UNIT);
